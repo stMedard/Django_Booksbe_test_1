@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Chapter for {% endblock %}
+
+{% block content %}
+<h1>Chapter for </h1>
+
+{% for chapter in chapter_list %}
+    <a href="book/{{ chapter.id }}/">{{ chapter.title_chapter }}</a>
+    <p>{{ chapter.book }}</p>
+    <p>{{ chapter.content }}</p>
+    
+{% endfor %}
+{% endblock %}
+
