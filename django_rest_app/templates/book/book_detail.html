@@ -9,5 +9,6 @@
 {% for chapter in chapter_list %}
     <h2>{{ chapter.title_chapter }}</h2>
     <p>{{ chapter.content }}</p>
+    <p><a href="{% url 'edit_chapter'  chapter.id %}">Edit chapter</a></p>
 {% endfor %}
 {% endblock %}

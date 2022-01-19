@@ -22,7 +22,7 @@ from django_rest_app import views
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
-router.register(r'book', views.BookViewSet)
+#router.register(r'book', views.BookViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
@@ -37,13 +37,15 @@ urlpatterns = [
     path("logout/", views.logout_request, name= "logout"),
     
     path('index/', views.index, name='index'),
-    path('add_book/', views.add_books, name='add_books' ),
+    path('', views.index, name='index'),
+    path('add_book/', views.add_books, name='add_books'),
+    path('add_chapter/', views.add_chapter, name='add_chapter'),
+    path('edit_chapter/<int:chapter_id>', views.edit_chapter, name='edit_chapter'),
 
     path(r'books/<int:year>/', views.year_archive),
     path(r'book/<int:pk>/', views.BookDetailView.as_view(), name='book-detail'),
     path(r'books/book/<int:pk>/', views.BookDetailView.as_view(), name='book-detail'),
-    path(r'books/', views.BookListView.as_view(), name='book-list'),
-    
+    path(r'books/', views.UserBookListView.as_view(), name='book-list'),
     
     path(r'chapter/<int:pk>/', views.ChapterDetailView.as_view(), name='chapter-detail'),
     path(r'chapters/chapter/<int:pk>/', views.ChapterDetailView.as_view(), name='chapter-detail'),

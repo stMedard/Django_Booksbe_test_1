@@ -4,16 +4,15 @@
 
 
 <div class="container py-5">
-    <h1>Add book</h1>
-    <form method="post">
+    <h1>Edit chapter</h1>
+    <form method="post" action="{% url 'edit_chapter' chapter.id  %}">
         {% load crispy_forms_tags %}
         {% csrf_token %}
         
-        <p>Tite: {{ formset.title }}</p>
-        <p>Author: {{ formset.author }}</p>
-        <p>Genre: {{ formset.genre }}</p>
-        
-        <p>Public data: {{ formset.pub_date }}</p>
+        <p>Tite: {{ formset.title_chapter }}</p>
+        <p>Book: {{ formset.book }}</p>
+        <p>Content: {{ formset.content }}</p>
+
         <button class="btn btn-primary" type="submit">Save</button>
     </form>
 </div>

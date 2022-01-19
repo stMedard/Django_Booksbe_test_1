@@ -9,7 +9,12 @@
 	<h1>Register</h1>
 	<form method="POST">
 		{% csrf_token %}
-		{{ register_form|crispy }}                    
+		<p>Nick: {{ register_form.username }}</p>
+		<p>Email: {{ register_form.email }}</p>
+		<p>First name: {{ register_form.first_name }}</p>
+		<p>Last name: {{ register_form.last_name }}</p>
+		<p>Password: {{ register_form.password1 }}</p>
+		<p>Confirm password: {{ register_form.password2 }}</p>
 		<button class="btn btn-primary" type="submit">Register</button>
 	</form>
 	<p class="text-center">If you already have an account, <a href="/login">login</a> instead.</p>
