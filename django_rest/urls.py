@@ -42,13 +42,13 @@ urlpatterns = [
     path('add_chapter/', views.add_chapter, name='add_chapter'),
     path('edit_chapter/<int:chapter_id>', views.edit_chapter, name='edit_chapter'),
 
-    path(r'books/<int:year>/', views.year_archive),
-    path(r'book/<int:pk>/', views.BookDetailView.as_view(), name='book-detail'),
-    path(r'books/book/<int:pk>/', views.BookDetailView.as_view(), name='book-detail'),
-    path(r'books/', views.UserBookListView.as_view(), name='book-list'),
+    path('books/<int:year>/', views.year_archive),
+    path('book/<int:pk>/', views.BookDetailView.as_view(), name='book-detail'),
+    path('books/book/<int:pk>/', views.BookDetailView.as_view(), name='book-detail'),
+    path('books/', views.UserBookListView.as_view(), name='book-list'),
     
-    path(r'chapter/<int:pk>/', views.ChapterDetailView.as_view(), name='chapter-detail'),
-    path(r'chapters/chapter/<int:pk>/', views.ChapterDetailView.as_view(), name='chapter-detail'),
-    path(r'chapters/', views.ChapterListView.as_view(), name='chapter-list'),
+    path('chapter/<int:pk>/', views.ChapterDetailView.as_view(), name='chapter-detail'),
+    path('chapters/chapter/<int:pk>/', views.ChapterDetailView.as_view(), name='chapter-detail'),
+    path('chapters/', views.ChapterListView.as_view(), name='chapter-list'),
     
 ]

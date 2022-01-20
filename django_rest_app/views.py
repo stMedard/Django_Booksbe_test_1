@@ -16,7 +16,7 @@ from django.views import View
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.forms import modelform_factory
-from .forms import NewUserForm, AddBookForm, AddChapterForm
+from .forms import NewUserForm, AddBookForm, ChapterForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 
@@ -145,24 +145,19 @@ def add_chapter(request):
     if not request.user.is_authenticated:
         return render(request, 'accounts/login.html')
     else:
-        ChapterForm = AddChapterForm 
-
+        
+        formset = ChapterForm(user=request.user)
+        print(formset)
         if request.method == 'POST':
-            formset = ChapterForm(request.POST)
-
-            if formset.is_valid():          
-                new_chapter = Chapter.objects.create(
-                    title_chapter = formset.cleaned_data["title_chapter"],
-                    book = formset.cleaned_data["book"],
-                    content = formset.cleaned_data["content"],
-                    #book = formset.cleaned_data['book'],
-                    #book = formset.Book.objects.get(user=request.user.id),
-                )
-                new_chapter.save()
+            formset = ChapterForm(request.POST, user=request.user)
+            print(formset)
+            if formset.is_valid():    
+                      
+                formset.save()
                 return redirect('index')
         else:
-            formset = ChapterForm()
-            
+            formset = ChapterForm(user=request.user)
+        
         return render( request, 'book/add_chapter.html', {'formset': formset})
 
 def edit_chapter(request, chapter_id):
@@ -171,35 +166,22 @@ def edit_chapter(request, chapter_id):
 
     else:
         chapter = Chapter.objects.get(id=chapter_id)
-        ChapterForm = AddChapterForm 
+        formset = ChapterForm(user=request.user) 
         
         if request.method == 'POST':
-            formset = ChapterForm(instance=chapter, data=request.POST)
+            formset = ChapterForm(instance=chapter, data=request.POST, user=request.user)
             
             if formset.is_valid():
+                
                 formset.save()
                 return redirect('book-list')
         else:
-            formset = ChapterForm(instance=chapter)
-            context = {'chapter': chapter, 'BookDetailView': BookDetailView, 'formset': formset}
+             
+            formset = ChapterForm(instance=chapter, user=request.user)
+            
+        context = {'chapter': chapter, 'BookDetailView': BookDetailView, 'formset': formset}
             
         return render( request, 'book/edit_chapter.html', context)
-
-def edit_chapterr(request, chapter_id):
-    chapter = Chapter.objects.get(id=chapter_id)
-
-    if request.method != 'POST':
-        form = AddChapterForm(instance=chapter)
-
-    else:
-        form = AddChapterForm(instance=chapter, data=request.POST) 
-        if form.is_valid():
-            form.save()
-            return redirect('book-list') #, chapter_id=chapter.id
-
-
-    context = {'chapter': chapter, 'BookDetailView': BookDetailView, 'form': form}
-    return render(request, 'book/edit_chapter.html', context)
 
 class ChapterDetailView(DetailView):
 

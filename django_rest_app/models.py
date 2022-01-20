@@ -3,6 +3,7 @@ from datetime import datetime
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
+from django.forms import ModelForm
 
 # Define a new User admin
 class UserAdmin(models.Model):
@@ -43,9 +44,7 @@ class Book(models.Model):
     pub_date = models.DateField(default = datetime.now, blank = True)
     title = models.CharField(max_length = 200, blank = True, default= '')
     author = models.CharField(max_length = 200, blank = True, default= '')
-    #user = models.CharField(max_length = 200, blank = True, default= '')
     user = models.ForeignKey(User, on_delete = models.CASCADE, null = True, default= '')
-    #user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, default= '', null=True)
     genre = models.ForeignKey(Genre, on_delete = models.CASCADE, help_text = 'Select a genre for this book', null = True)
 
     def __str__(self):
@@ -53,19 +52,21 @@ class Book(models.Model):
 
     def get_absolute_url(self):
         return reverse('book-detail', args=[str(self.id)])
-        
+
 class Chapter(models.Model):
     title_chapter = models.CharField(max_length=200, blank=True)
     content = models.TextField(blank = True)
     book = models.ForeignKey(Book, on_delete=models.CASCADE, blank=True, default = '')
-    
-    #def display_chapter(self):
-    #    return ', '.join(chapter.name for chapter in self.chapter.all()[:3])
+    #user = models.ForeignKey(User, on_delete = models.CASCADE, null = True, default= '')
 
-    #display_chapter.short_description = 'Chapter'
+    class Meta:
+        ordering = ['title_chapter', 'content', 'book']
 
     def __str__(self):
         return self.title_chapter
 
     def get_absolute_url(self):
         return reverse('chapter-detail', args=[str(self.id)])
+
+
+
