@@ -1,5 +1,3 @@
-from email import charset
-from urllib import request
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
@@ -12,10 +10,8 @@ from django.views.generic.list import ListView
 
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
-from django.views import View
-from django.http import HttpResponseRedirect
 from django.contrib import messages
-from django.forms import modelform_factory
+
 from .forms import NewUserForm, AddBookForm, ChapterForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -147,7 +143,7 @@ def add_chapter(request):
     else:
         
         formset = ChapterForm(user=request.user)
-        print(formset)
+        #print(formset)
         if request.method == 'POST':
             formset = ChapterForm(request.POST, user=request.user)
             print(formset)
@@ -190,9 +186,6 @@ class ChapterDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        #chapter_id = self.kwargs['pk']
-        #context['book_detail'] = Book.objects.filter(title = chapter_id)
-        #context['genre_detail'] = Genre.objects.filter(genre = chapter_id)
 
         return context
 
@@ -205,3 +198,6 @@ class ChapterListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+
+def ckeditor5(request):
+    return render( request, 'book/index.html' )

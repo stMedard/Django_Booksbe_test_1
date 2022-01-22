@@ -1,16 +1,14 @@
-
-from urllib import request
 from django.forms import  modelform_factory 
 from .models import Book, Chapter
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
+
 AddBookForm = modelform_factory(Book, fields =('title', 'author', 'genre', 'pub_date'))
 
-#ChapterForm = modelform_factory(Chapter, fields =('title_chapter', 'book', 'content'))
-
 class ChapterForm(forms.ModelForm):
+
 	class Meta:
 		model = Chapter	
 		fields =('title_chapter', 'book', 'content')

@@ -6,14 +6,24 @@
 <div class="container py-5">
     <h1>Edit chapter</h1>
     <form method="post" action="{% url 'edit_chapter' chapter.id  %}">
-        {% load crispy_forms_tags %}
         {% csrf_token %}
         
-        <p>Tite: {{ formset.title_chapter }}</p>
-        <p>Book: {{ formset.book }}</p>
-        <p>Content: {{ formset.content }}</p>
+        <p>{{ formset.media }}{{ formset.as_p | safe}}</p>
 
         <button class="btn btn-primary" type="submit">Save</button>
     </form>
 </div>
+
+<script>
+    document.getElementById("id_title_chapter").classList.add("form-control");
+    document.getElementById("id_book").classList.add("form-control");
+    document.getElementById("id_title_chapter").placeholder = "Title chapter";
+    document.getElementById("id_book").placeholder = "Password";
+    document.getElementById("id_title_chapter").type = "text";
+    document.getElementById("id_book").type = "password";
+    document.getElementById("id_title_chapter").required = "required";
+    document.getElementById("id_book").required = "required";
+    document.getElementById("id_title_chapter").autofocus = "autofocus";
+</script>
+
 {% endblock %}

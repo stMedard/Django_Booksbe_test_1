@@ -1,14 +1,19 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>{{ book.title }}</h1>
-<p>Genre: {{ book.genre }}</p>
-<p>Author: {{ book.author }}</p>
-<p>Published: {{ book.pub_date|date }}</p>
-
-{% for chapter in chapter_list %}
-    <h2>{{ chapter.title_chapter }}</h2>
-    <p>{{ chapter.content }}</p>
-    <p><a href="{% url 'edit_chapter'  chapter.id %}">Edit chapter</a></p>
-{% endfor %}
+<div class="container py-5">
+    <div class="card" style="width: 58rem;">
+        <div class="card-body">
+            <h5 class="card-title">{{ book.title }}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Genre: {{ book.genre }}</h6>
+            <h6 class="card-subtitle mb-2 text-muted">Author: {{ book.author }}</h6>
+            <h6 class="card-subtitle mb-2 text-muted">Published: {{ book.pub_date|date }}</h6>
+            {% for chapter in chapter_list %}
+            <h5>{{ chapter.title_chapter }}</h5>
+            <p>{{ chapter.content |safe }}</p>
+            <p><a href="{% url 'edit_chapter'  chapter.id %}">Edit chapter</a></p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock %}

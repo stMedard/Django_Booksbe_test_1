@@ -1,19 +1,37 @@
 {% extends "base.html" %}
+
 {% block content %}
-
-
+{% load static %}
 
 <div class="container py-5">
+
     <h1>Add chapter</h1>
     <form method="post">
-        {% load crispy_forms_tags %}
-        {% csrf_token %}
-        
-        <p>Tite: {{ formset.title_chapter }}</p>
-        <p>Book: {{ formset.book }}</p>
-        <p>Content: {{ formset.content }}</p>
 
-        <button class="btn btn-primary" type="submit">Save</button>
+        {% csrf_token %}
+        <div class="document-editor">
+            <div class="document-editor__toolbar"></div>
+            <div class="document-editor__editable-container">
+                <div class="document-editor__editable">
+                    <p>{{ formset.media }}{{ formset.as_p | safe}}</p>
+                </div>
+            </div>
+            <button class="btn btn-primary" type="submit">Save</button>
+        </div>
+
     </form>
 </div>
+
+<script>
+    document.getElementById("id_title_chapter").classList.add("form-control");
+    document.getElementById("id_book").classList.add("form-control");
+    document.getElementById("id_title_chapter").placeholder = "Title chapter";
+    document.getElementById("id_book").placeholder = "Password";
+    document.getElementById("id_title_chapter").type = "text";
+    document.getElementById("id_book").type = "password";
+    document.getElementById("id_title_chapter").required = "required";
+    document.getElementById("id_book").required = "required";
+    document.getElementById("id_title_chapter").autofocus = "autofocus";
+</script>
+
 {% endblock %}

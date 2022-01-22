@@ -38,9 +38,6 @@ class ChapterAdmin(admin.ModelAdmin):
     list_display = ('title_chapter', 'book', 'content')
     fields = ['title_chapter', 'book', 'content']
 
-#admin.site.register(Author)
-#admin.site.register(Book)
-#admin.site.register(Chapter)
 admin.site.register(Genre)
-#admin.site.register(Chapter)
-# Register your models here.
+
+
