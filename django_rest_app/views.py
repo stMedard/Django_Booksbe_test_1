@@ -12,7 +12,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 
-from .forms import NewUserForm, AddBookForm, ChapterForm
+from .forms import NewUserForm, BookForm, ChapterForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 
@@ -95,10 +95,10 @@ def add_books(request):
     if not request.user.is_authenticated:
         return render(request, 'accounts/login.html')
     else:
-        BookForm = AddBookForm 
+        Form = BookForm 
         
         if request.method == 'POST':
-            formset = BookForm(request.POST)
+            formset = Form(request.POST)
             
             if formset.is_valid():
                             
@@ -106,21 +106,56 @@ def add_books(request):
                     title = formset.cleaned_data["title"],
                     author = formset.cleaned_data["author"],
                     genre = formset.cleaned_data["genre"],
-                    pub_date = formset.cleaned_data["pub_date"],
+                    publish = formset.cleaned_data["publish"],
+                    date_of_publication = formset.cleaned_data["date_of_publication"],
                     user = User.objects.get(username=request.user.username),
                 )
                 new_book.save()
                
                 return redirect('index')
         else:
-            formset = BookForm()
+            formset = Form()
            
         return render( request, 'book/add_book.html', {'formset': formset})
+    
+def edit_book(request, book_id):
+    if not request.user.is_authenticated:
+        return render(request, 'accounts/login.html')
+
+    else:
+        book = Book.objects.get(id=book_id)
+        formset = BookForm(book) 
+        
+        if request.method == 'POST':
+            formset = BookForm(instance=book, data=request.POST)
+            
+            if formset.is_valid():
+                
+                formset.save()
+                return redirect('book-list')
+        else:
+             
+            formset = BookForm(instance=book)
+            
+        context = {'book': book, 'BookDetailView': BookDetailView, 'formset': formset}
+            
+        return render( request, 'book/edit_book.html', context)
 
 class BookDetailView(DetailView):
 
     model = Book
     template_name = 'book/book_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        book_id = self.kwargs['pk']
+        context['chapter_list'] = Chapter.objects.filter(book = book_id)
+        return context
+
+class IndexBookDetailView(DetailView):
+
+    model = Book
+    template_name = 'book/index_book_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -136,6 +171,15 @@ class UserBookListView(ListView):
     
     def get_queryset(self):
         return Book.objects.filter(user=self.request.user) 
+
+class PublishedBookListView(ListView):
+
+    model = Book
+    paginate_by = 100  # if pagination is desired
+    template_name = 'index.html'
+    
+    def get_queryset(self, *args, **kwargs):
+        return Book.objects.filter(publish=True) 
 
 def add_chapter(request):
     if not request.user.is_authenticated:

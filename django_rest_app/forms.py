@@ -5,7 +5,15 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 
-AddBookForm = modelform_factory(Book, fields =('title', 'author', 'genre', 'pub_date'))
+#AddBookForm = modelform_factory(Book, fields =('title', 'author', 'genre', 'publish', 'date_of_publication'))
+
+class BookForm(forms.ModelForm):
+    class Meta:
+        model = Book
+        fields = ('title', 'author', 'genre', 'publish', 'date_of_publication')
+        widgets = {
+            'publish': forms.RadioSelect
+        }
 
 class ChapterForm(forms.ModelForm):
 
@@ -16,7 +24,7 @@ class ChapterForm(forms.ModelForm):
 	def __init__(self, *args, **kwargs):
 		self.user = kwargs.pop('user', None)  
 		super(ChapterForm, self).__init__(*args, **kwargs)
-		self.queryset = Book.objects.filter(user=self.user)
+		#self.queryset = Book.objects.filter(user=self.user)
 		self.fields["book"].queryset = Book.objects.filter(user=self.user)
 
 

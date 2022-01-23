@@ -7,13 +7,10 @@
             <h5 class="card-title">{{ book.title }}</h5>
             <h6 class="card-subtitle mb-2 text-muted">Genre: {{ book.genre }}</h6>
             <h6 class="card-subtitle mb-2 text-muted">Author: {{ book.author }}</h6>
-            <h6 class="card-subtitle mb-2 text-muted">Published: {{ book.get_publish_display }}</h6>
             <h6 class="card-subtitle mb-2 text-muted">Publish date: {{ book.date_of_publication|date }}</h6>
-            <p><a href="{% url 'edit_book'  book.id %}">Edit book</a></p>
             {% for chapter in chapter_list %}
             <h5>{{ chapter.title_chapter }}</h5>
             <p>{{ chapter.content |safe }}</p>
-            <p><a href="{% url 'edit_chapter'  chapter.id %}">Edit chapter</a></p>
             {% endfor %}
         </div>
     </div>

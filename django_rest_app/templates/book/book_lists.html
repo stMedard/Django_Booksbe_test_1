@@ -11,8 +11,9 @@
                 <div class="card-body">
                     <h5><a href="book/{{ book.id }}/">{{ book.title }}</a></h5>
                     <p class="card-title">By {{ book.author }}</p>
-                    <p class="card-title">Genre {{ book.genre }}</p>
-                    <p class="card-title">Published: {{ book.pub_date|date }}</p>
+                    <p class="card-title">Genre: {{ book.genre }}</p>
+                    <p class="card-title">Published: {{ book.get_publish_display}}</p>
+                    <p class="card-title">Publication: {{ book.date_of_publication|date }}</p>
                 </div>
             </div>
         </div>

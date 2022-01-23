@@ -39,17 +39,19 @@ urlpatterns = [
     path('register/', views.register_request, name='register'),
     path("logout/", views.logout_request, name= "logout"),
     
-    path('index/', views.index, name='index'),
-    path('', views.index, name='index'),
+    path('index/', views.PublishedBookListView.as_view(), name='index'),
+    path('', views.PublishedBookListView.as_view(), name='index'),
     path('add_book/', views.add_books, name='add_books'),
     path('add_chapter/', views.add_chapter, name='add_chapter'),
     path('edit_chapter/<int:chapter_id>', views.edit_chapter, name='edit_chapter'),
+    path('edit_book/<int:book_id>', views.edit_book, name='edit_book'),
 
     path('books/<int:year>/', views.year_archive),
     path('book/<int:pk>/', views.BookDetailView.as_view(), name='book-detail'),
     path('books/book/<int:pk>/', views.BookDetailView.as_view(), name='book-detail'),
     path('books/', views.UserBookListView.as_view(), name='book-list'),
-    
+    path('index/book/<int:pk>/', views.IndexBookDetailView.as_view(), name='book-detail'),
+
     path('chapter/<int:pk>/', views.ChapterDetailView.as_view(), name='chapter-detail'),
     path('chapters/chapter/<int:pk>/', views.ChapterDetailView.as_view(), name='chapter-detail'),
     path('chapters/', views.ChapterListView.as_view(), name='chapter-list'),

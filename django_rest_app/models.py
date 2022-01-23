@@ -35,11 +35,13 @@ class Genre(models.Model):
         return self.genre
 
 class Book(models.Model):
-    pub_date = models.DateField(default = datetime.now, blank = True)
+    date_of_publication = models.DateField(default = datetime.now, blank = True)
     title = models.CharField(max_length = 200, blank = True, default= '')
     author = models.CharField(max_length = 200, blank = True, default= '')
     user = models.ForeignKey(User, on_delete = models.CASCADE, null = True, default= '')
-    genre = models.ForeignKey(Genre, on_delete = models.CASCADE, help_text = 'Select a genre for this book', null = True)
+    genre = models.ForeignKey(Genre, on_delete = models.CASCADE, null = True)
+    CHOICES = ((True, 'Yes'), (False, 'No'))
+    publish = models.BooleanField(default = False, choices = CHOICES, help_text = 'Just how the book is going to be published now')
 
     def __str__(self):
         return self.title

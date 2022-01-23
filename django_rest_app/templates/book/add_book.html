@@ -8,12 +8,8 @@
     <form method="post">
         {% load crispy_forms_tags %}
         {% csrf_token %}
+        <p>{{formset.as_p}}</p>
         
-        <p>Tite: {{ formset.title }}</p>
-        <p>Author: {{ formset.author }}</p>
-        <p>Genre: {{ formset.genre }}</p>
-        
-        <p>Public data: {{ formset.pub_date }}</p>
         <button class="btn btn-primary" type="submit">Save</button>
     </form>
 </div>

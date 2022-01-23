@@ -9,13 +9,8 @@
     <form method="post">
 
         {% csrf_token %}
-        <div class="document-editor">
-            <div class="document-editor__toolbar"></div>
-            <div class="document-editor__editable-container">
-                <div class="document-editor__editable">
-                    <p>{{ formset.media }}{{ formset.as_p | safe}}</p>
-                </div>
-            </div>
+        <div>
+            <p>{{ formset.media }}{{ formset.as_p | safe}}</p>
             <button class="btn btn-primary" type="submit">Save</button>
         </div>
 
