@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 
-
-    {% block content %}
-    <div class="container py-5">
+{% block content %}
+<div class="container py-5">
     <h1>Books</h1>
     <div class="row row-cols-1 row-cols-md-4 g-4">
         {% for book in book_list %}
@@ -20,4 +19,4 @@
         {% endfor %}
     </div>
 </div>
-    {% endblock %}
+{% endblock %}

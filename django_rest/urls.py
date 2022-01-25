@@ -14,12 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
 from django.urls import include, path
 from rest_framework import routers
 from django_rest_app import views
 from django.conf import settings
 from django.conf.urls.static import static
+#from django.conf.urls import  url
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -28,7 +28,10 @@ router.register(r'groups', views.GroupViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
+
 urlpatterns = [
+
+    path('generate-pdf/<int:id>/', views.generatePDF, name='generate-pdf'),
 
     path('admin/', admin.site.urls, name='admin'),
     path('router/', include(router.urls)),
@@ -55,9 +58,9 @@ urlpatterns = [
     path('chapter/<int:pk>/', views.ChapterDetailView.as_view(), name='chapter-detail'),
     path('chapters/chapter/<int:pk>/', views.ChapterDetailView.as_view(), name='chapter-detail'),
     path('chapters/', views.ChapterListView.as_view(), name='chapter-list'),
-    path('ckeditor/', views.ckeditor5, name='ckeditor5'),
-    
+
 ] 
 urlpatterns += [
     path("ckeditor5/", include('django_ckeditor_5.urls')),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

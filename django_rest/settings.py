@@ -43,10 +43,72 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
     'django_ckeditor_5',
-    #'ckeditor_uploader',
+    'ckeditor',
+    'ckeditor_uploader',
+    'reportlab'
 ]
 #CKEDITOR_ALLOW_NONIMAGE_FILES = False
+CKEDITOR_CONFIGS = {
+    'default': {
+        'skin': 'moono',
+        # 'skin': 'office2013',
+        'toolbar_Basic': [
+            [ 'Bold', 'Italic']#'Source', '-',
+        ],
+        'toolbar_YourCustomToolbarConfig': [
+            {'name': 'document', 'items': ['Save']},#'Source', '-', 'NewPage', 'Preview', 'Print', '-', , 'Templates'
+            {'name': 'clipboard', 'items': ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']},
+            {'name': 'editing', 'items': ['Find', 'Replace', '-', 'SelectAll']},
+            #{'name': 'forms',
+            # 'items': ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton',
+            #           'HiddenField']},
+            #'/',
+            {'name': 'basicstyles','items': ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', '-', 'RemoveFormat']},
+            {'name': 'paragraph', 'items': ['NumberedList', 'BulletedList', '-', '-', 'Outdent', 'Indent''-', '-''JustifyCenter',  'JustifyBlock']},
+              #,'JustifyRight', 'Blockquote', 'CreateDiv', '-','JustifyLeft', , '-', 'BidiLtr', 'BidiRtl','Language'
+            {'name': 'links', 'items': ['Link', 'Unlink']},#, 'Anchor'
+            #{'name': 'insert',
+            # 'items': ['Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe']},
+            #'/',
+            #{'name': 'styles', 'items': ['Styles', 'Format', 'Font', 'FontSize']},
+            #{'name': 'colors', 'items': ['TextColor', 'BGColor']},
+            #{'name': 'tools', 'items': ['Maximize']},#, 'ShowBlocks'
+            {'name': 'about', 'items': ['About']},
+            #'/',  # put this to force next toolbar on new line
+            {'name': 'yourcustomtools', 'items': [
+                # put the name of your editor.ui.addButton here
+                #'Preview',
+                'Maximize',
 
+            ]},
+        ],
+        'toolbar': 'YourCustomToolbarConfig',  # put selected toolbar config here
+         'toolbarGroups': [{ 'name': 'document', 'groups': [ 'mode', 'document', 'doctools' ] }],
+         'height': 291,
+         'width': '100%',
+         'filebrowserWindowHeight': 725,
+         'filebrowserWindowWidth': 940,
+         #'toolbarCanCollapse': True,
+        # 'mathJaxLib': '//cdn.mathjax.org/mathjax/2.2-latest/MathJax.js?config=TeX-AMS_HTML',
+        'tabSpaces': 4,
+        'extraPlugins': ','.join([
+            'uploadimage', # the upload image feature
+            # your extra plugins here
+            'div',
+            'autolink',
+            'autoembed',
+            'embedsemantic',
+            'autogrow',
+            # 'devtools',
+            'widget',
+            'lineutils',
+            'clipboard',
+            'dialog',
+            'dialogui',
+            'elementspath'
+        ]),
+    }
+}
 customColorPalette = [
         {
             'color': 'hsl(4, 90%, 58%)',
@@ -222,9 +284,9 @@ STATICFILES_DIRS = [
     '/home/medard/Django-Rest-test-1/Django_Booksbe_test_1/static',
 ]
 #STATICFILES_DIRS=[(os.path.join(BASE_DIR,'static'))]
-#CKEDITOR_UPLOAD_PATH = "uploads/"
+CKEDITOR_UPLOAD_PATH = "uploads/"
 
-#CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
+CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

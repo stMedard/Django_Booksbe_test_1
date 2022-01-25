@@ -5,7 +5,7 @@
     <h1>Edit book</h1>
     <form method="post" action="{% url 'edit_book' book.id  %}">
         {% csrf_token %}
-        
+
         <p>{{ formset.media }}{{ formset.as_p | safe}}</p>
 
         <button class="btn btn-primary" type="submit">Save</button>
@@ -15,13 +15,11 @@
 <script>
     document.getElementById("id_title").classList.add("form-control");
     document.getElementById("id_book").classList.add("form-control");
-    document.getElementById("id_title").placeholder = "Title chapter";
-    document.getElementById("id_book").placeholder = "Password";
+    document.getElementById("id_title").placeholder = "Title";
     document.getElementById("id_title").type = "text";
-    document.getElementById("id_book").type = "password";
+    document.getElementById("id_book").type = "text";
     document.getElementById("id_title").required = "required";
     document.getElementById("id_book").required = "required";
-    document.getElementById("id_title").autofocus = "autofocus";
 </script>
 
 {% endblock %}

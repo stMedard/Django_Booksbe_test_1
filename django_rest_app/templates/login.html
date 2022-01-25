@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
 {% block links %}
-  
+
 {% endblock %}
 {% block content %}
 {% load crispy_forms_tags %}
 
-<!--Login--> 
+<!--Login-->
 <div class="container py-5">
   <h1>Login</h1>
   <form method="POST">
@@ -14,17 +14,22 @@
     {{ login_form|crispy }}
     <button class="btn btn-primary" type="submit">Login</button>
   </form>
-  <p class="text-center">Don't have an account? <a href="/register">Create an account</a>.</p>
+  <p class="text-center">Don't have an account? <a href="/register">Create an account.</a></p>
 </div>
 <script>
   document.getElementById("id_username").classList.add("form-control");
   document.getElementById("id_password").classList.add("form-control");
-  document.getElementById("id_username").placeholder = "Username";
+  document.getElementById("id_username").classList.add("form-control");
+  document.getElementById("id_first_name").classList.add("form-control");
+  document.getElementById("id_second_name").placeholder = "Username";
   document.getElementById("id_password").placeholder = "Password";
   document.getElementById("id_username").type = "text";
+  document.getElementById("id_first_name").type = "text";
+  document.getElementById("id_second_name").type = "text";
   document.getElementById("id_password").type = "password";
   document.getElementById("id_username").required = "required";
+  document.getElementById("id_first_name").required = "required";
+  document.getElementById("id_second_name").required = "required";
   document.getElementById("id_password").required = "required";
-  document.getElementById("id_username").autofocus = "autofocus";
 </script>
 {% endblock %}

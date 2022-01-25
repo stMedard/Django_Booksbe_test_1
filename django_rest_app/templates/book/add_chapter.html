@@ -10,7 +10,7 @@
 
         {% csrf_token %}
         <div>
-            <p>{{ formset.media }}{{ formset.as_p | safe}}</p>
+            <p>{{ formset.media }}{{ formset.as_p|safe}}</p>
             <button class="btn btn-primary" type="submit">Save</button>
         </div>
 
@@ -21,12 +21,11 @@
     document.getElementById("id_title_chapter").classList.add("form-control");
     document.getElementById("id_book").classList.add("form-control");
     document.getElementById("id_title_chapter").placeholder = "Title chapter";
-    document.getElementById("id_book").placeholder = "Password";
     document.getElementById("id_title_chapter").type = "text";
-    document.getElementById("id_book").type = "password";
+    document.getElementById("id_book").type = "text";
     document.getElementById("id_title_chapter").required = "required";
     document.getElementById("id_book").required = "required";
-    document.getElementById("id_title_chapter").autofocus = "autofocus";
+    
 </script>
 
 {% endblock %}

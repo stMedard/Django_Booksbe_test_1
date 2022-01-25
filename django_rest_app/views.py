@@ -13,8 +13,8 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 
 from .forms import NewUserForm, BookForm, ChapterForm
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
+#from django.contrib.auth.mixins import LoginRequiredMixin
+#from django.contrib.auth.decorators import login_required
 
 
 
@@ -54,7 +54,7 @@ def register_request(request):
 			my_group.user_set.add(user)
 			login(request, user)
 			messages.success(request, "Registration successful." )
-			return redirect("/admin/")
+			return redirect("/index/")
 		messages.error(request, "Unsuccessful registration. Invalid information.")
 	form = NewUserForm()
 	return render (request=request, template_name="accounts/register.html", context={"register_form":form})
@@ -112,7 +112,7 @@ def add_books(request):
                 )
                 new_book.save()
                
-                return redirect('index')
+                return redirect('book-list')
         else:
             formset = Form()
            
@@ -187,14 +187,14 @@ def add_chapter(request):
     else:
         
         formset = ChapterForm(user=request.user)
-        #print(formset)
+
         if request.method == 'POST':
             formset = ChapterForm(request.POST, user=request.user)
             print(formset)
             if formset.is_valid():    
                       
                 formset.save()
-                return redirect('index')
+                return redirect('book-list')
         else:
             formset = ChapterForm(user=request.user)
         
@@ -243,5 +243,86 @@ class ChapterListView(ListView):
         context = super().get_context_data(**kwargs)
         return context
 
-def ckeditor5(request):
-    return render( request, 'book/index.html' )
+from django.http import FileResponse
+#from reportlab.pdfgen import canvas
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+#from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.rl_config import defaultPageSize
+from reportlab.lib.units import inch
+#from django.http import HttpResponse, HttpResponseBadRequest
+#from io import BytesIO
+from reportlab.platypus import SimpleDocTemplate, Paragraph, PageBreak
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import mm, inch
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.pdfmetrics import registerFontFamily
+from reportlab.pdfbase.ttfonts import TTFont  
+#from reportlab.lib.pagesizes import letter, A5
+from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT, TA_CENTER, TA_RIGHT
+PAGESIZE = (140 * mm, 216 * mm)
+BASE_MARGIN = 5 * mm
+
+def generatePDF(request,id):
+    pdfmetrics.registerFont(TTFont('Berylium', 'resources/fonts/Berylium/Berylium.ttf'))
+    pdfmetrics.registerFont(TTFont('BeryliumBd', './resources/fonts/Berylium/Beryliumbold.ttf'))
+    pdfmetrics.registerFont(TTFont('BeryliumIt', './resources/fonts/Berylium/BeryliumItalic.ttf'))
+    pdfmetrics.registerFont(TTFont('BeryliumBI', './resources/fonts/Berylium/BeryliumboldItalic.ttf'))
+    registerFontFamily('Berylium', normal='Berylium', bold='BeryliumBd', italic='BeryliumIt', boldItalic='BeryliumBI')
+    PAGE_HEIGHT=defaultPageSize[1]
+    PAGE_WIDTH=defaultPageSize[0]
+    book = Book.objects.get(id=id)
+    Title = book.title
+    pageinfo = book.title
+    Author = book.author
+    Filename = book.title
+
+    def myFirstPage(canvas, doc):
+        canvas.saveState()
+        canvas.setFont('BeryliumBd',18)
+        canvas.drawCentredString(PAGE_WIDTH/2.0, PAGE_HEIGHT-130, Title)
+        canvas.setFont('BeryliumIt',14)
+        canvas.drawCentredString(PAGE_WIDTH/2.0, PAGE_HEIGHT-160, Author)
+        canvas.setFont('Berylium',9)
+        canvas.drawString(inch, 0.75 * inch,"First Page / %s" % pageinfo)
+        canvas.restoreState()
+        canvas.showPage()
+    
+    def myLaterPages(canvas, doc):
+        canvas.saveState()
+        canvas.setFont('Berylium', 9)
+        canvas.drawString(inch, 0.75 * inch,"Page %d %s" % (doc.page, pageinfo))
+        canvas.restoreState()
+    
+    def go():
+
+        doc = SimpleDocTemplate(filename=Filename, title=book.title, author=book.author)   
+        Story = [Spacer(2,2*inch)]
+        style1 = ParagraphStyle('BeryliumBd',
+                                alignment=TA_CENTER,
+                                fontName='BeryliumBd',
+                                fontSize=14)
+        style2 = ParagraphStyle('Berylium',
+                                alignment=TA_JUSTIFY,
+                                fontName='Berylium',
+                                fontSize=11)
+
+        chapters = Chapter.objects.filter(book_id = id)
+
+        for i in chapters:
+         
+            d = (" %s" % i.title_chapter )
+            f = Paragraph(d, style1)
+            Story.append(Spacer(2,1*inch))
+            Story.append(f)
+            Story.append(Spacer(2,1*inch))
+            e = (" %s" % i.content )
+            g = Paragraph(e, style2)
+            Story.append(g)
+            Story.append(Spacer(2,2*inch))
+            Story.append(PageBreak())
+
+        doc.build(Story, onFirstPage=myFirstPage, onLaterPages=myLaterPages)    
+
+    go()
+    return FileResponse(open(Filename, 'br'), content_type='application/pdf')    
+

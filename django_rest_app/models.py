@@ -2,7 +2,8 @@ from django.db import models
 from datetime import datetime
 from django.urls import reverse
 from django.contrib.auth.models import User
-from django_ckeditor_5.fields import CKEditor5Field
+#from django_ckeditor_5.fields import CKEditor5Field
+from ckeditor.fields import RichTextField
 
 # Define a new User admin
 class UserAdmin(models.Model):
@@ -51,16 +52,17 @@ class Book(models.Model):
 
 class Chapter(models.Model):
     title_chapter = models.CharField(max_length=200, blank=True)
-    content = CKEditor5Field('Content', config_name='extends', blank=True)
+    content = RichTextField()
+    #content = CKEditor5Field('Content', config_name='extends', blank=True)
     
     book = models.ForeignKey(Book, on_delete=models.CASCADE, blank=True, default = '')
 
     class Meta:
         ordering = ['title_chapter', 'content', 'book']
 
-    def __str__(self):
-        return self.title_chapter
-
+    #def __str__(self):
+    #    return self.title_chapter
+    
     def get_absolute_url(self):
         return reverse('chapter-detail', args=[str(self.id)])
 
