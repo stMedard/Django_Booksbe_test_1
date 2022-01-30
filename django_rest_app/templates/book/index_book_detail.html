@@ -12,7 +12,7 @@
             <a href="{% url 'generate-pdf' id=book.id  %}" class="btn btn-sm btn-success">Generate Pdf</a>
             {% for chapter in chapter_list %}
             <h5>{{ chapter.title_chapter }}</h5>
-            <p>{{ chapter.content |safe }}</p>
+            <p>{{ chapter.content|safe |truncatewords:100 }}</p>
             {% endfor %}
         </div>
     </div>

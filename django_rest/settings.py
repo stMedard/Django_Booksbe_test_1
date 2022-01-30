@@ -49,14 +49,16 @@ INSTALLED_APPS = [
 ]
 #CKEDITOR_ALLOW_NONIMAGE_FILES = False
 CKEDITOR_CONFIGS = {
+
     'default': {
+        'enterMode': 2, # 1 for add p tags and 2 for add br tags
         'skin': 'moono',
         # 'skin': 'office2013',
         'toolbar_Basic': [
-            [ 'Bold', 'Italic']#'Source', '-',
+            [ 'Source', 'Bold', 'Italic']#'-',
         ],
         'toolbar_YourCustomToolbarConfig': [
-            {'name': 'document', 'items': ['Save']},#'Source', '-', 'NewPage', 'Preview', 'Print', '-', , 'Templates'
+            {'name': 'document', 'items': ['Source','Save']},# '-', 'NewPage', 'Preview', 'Print', '-', , 'Templates'
             {'name': 'clipboard', 'items': ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']},
             {'name': 'editing', 'items': ['Find', 'Replace', '-', 'SelectAll']},
             #{'name': 'forms',
@@ -109,6 +111,7 @@ CKEDITOR_CONFIGS = {
         ]),
     }
 }
+
 customColorPalette = [
         {
             'color': 'hsl(4, 90%, 58%)',

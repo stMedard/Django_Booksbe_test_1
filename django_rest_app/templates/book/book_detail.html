@@ -17,7 +17,6 @@
             {% for chapter in chapter_list %}
             <h5>{{ chapter.title_chapter }}</h5>
             <p><a href="{% url 'edit_chapter'  chapter.id %}">Edit chapter</a></p>
-            <p>{{ chapter.content |safe }}</p>
             
             {% endfor %}
         </div>

@@ -10,7 +10,7 @@
 
         {% csrf_token %}
         <div>
-            <p>{{ formset.media }}{{ formset.as_p|safe}}</p>
+            <p>{{ formset.media }}{{ formset.as_p}}</p>
             <button class="btn btn-primary" type="submit">Save</button>
         </div>
 

@@ -243,86 +243,147 @@ class ChapterListView(ListView):
         context = super().get_context_data(**kwargs)
         return context
 
-from django.http import FileResponse
-#from reportlab.pdfgen import canvas
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-#from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import Paragraph, Spacer, PageBreak, BaseDocTemplate,PageTemplate, Frame , NextPageTemplate
 from reportlab.rl_config import defaultPageSize
-from reportlab.lib.units import inch
-#from django.http import HttpResponse, HttpResponseBadRequest
-#from io import BytesIO
-from reportlab.platypus import SimpleDocTemplate, Paragraph, PageBreak
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import mm, inch
+from django.http import HttpResponse
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.units import mm, inch, cm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.pdfmetrics import registerFontFamily
 from reportlab.pdfbase.ttfonts import TTFont  
-#from reportlab.lib.pagesizes import letter, A5
+from reportlab.platypus.tableofcontents import TableOfContents
+from reportlab.lib.pagesizes import A4
 from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT, TA_CENTER, TA_RIGHT
-PAGESIZE = (140 * mm, 216 * mm)
-BASE_MARGIN = 5 * mm
 
-def generatePDF(request,id):
-    pdfmetrics.registerFont(TTFont('Berylium', 'resources/fonts/Berylium/Berylium.ttf'))
-    pdfmetrics.registerFont(TTFont('BeryliumBd', './resources/fonts/Berylium/Beryliumbold.ttf'))
-    pdfmetrics.registerFont(TTFont('BeryliumIt', './resources/fonts/Berylium/BeryliumItalic.ttf'))
-    pdfmetrics.registerFont(TTFont('BeryliumBI', './resources/fonts/Berylium/BeryliumboldItalic.ttf'))
-    registerFontFamily('Berylium', normal='Berylium', bold='BeryliumBd', italic='BeryliumIt', boldItalic='BeryliumBI')
+class MyDocTemplate(BaseDocTemplate):
+    
+    def __init__(self, filename, **kw):
+        self.allowSplitting = 0
+        BaseDocTemplate.__init__(self, filename, **kw)
+
+    def afterFlowable(self, flowable):
+        "Registers TOC entries."
+        if flowable.__class__.__name__ == 'Paragraph':
+            text = flowable.getPlainText()
+            E = [0, text, self.page]
+            bn = getattr(flowable,'_bookmarkName',None)
+            if bn is not None: 
+                E.append(bn), 
+                self.notify('TOCEntry', tuple(E))
+            else:
+                return
+
+def generatePDF(request, id):
+    Frame1=Frame(2.5*cm, 2.3*cm, 16*cm, 25*cm,id='F1')
     PAGE_HEIGHT=defaultPageSize[1]
     PAGE_WIDTH=defaultPageSize[0]
+    
+    top_margin = A4[1] - inch
+    bottom_margin = inch
+    left_margin = inch
+    right_margin = A4[0] - inch
+
     book = Book.objects.get(id=id)
     Title = book.title
-    pageinfo = book.title
     Author = book.author
-    Filename = book.title
+    pageinfo = "%s / %s " % (Author, Title)
+    file_name = book.title
+    doc = MyDocTemplate(file_name)
+
+    def drawPageFrame(canv):
+        canv.line(left_margin, top_margin, right_margin, top_margin)
+        canv.setFont('Berylium',9)
+        canv.drawString(left_margin, top_margin + 2, pageinfo)
+        canv.line(left_margin, top_margin, right_margin, top_margin)
+        canv.line(left_margin, bottom_margin, right_margin, bottom_margin)
+        canv.drawCentredString(0.5*A4[0], 0.5 * inch,"Page %d" % canv.getPageNumber())
 
     def myFirstPage(canvas, doc):
         canvas.saveState()
         canvas.setFont('BeryliumBd',18)
-        canvas.drawCentredString(PAGE_WIDTH/2.0, PAGE_HEIGHT-130, Title)
+        canvas.drawCentredString(PAGE_WIDTH/2.0, PAGE_HEIGHT-190, Title)
         canvas.setFont('BeryliumIt',14)
-        canvas.drawCentredString(PAGE_WIDTH/2.0, PAGE_HEIGHT-160, Author)
+        canvas.drawCentredString(PAGE_WIDTH/2.0, PAGE_HEIGHT-210, Author)
         canvas.setFont('Berylium',9)
-        canvas.drawString(inch, 0.75 * inch,"First Page / %s" % pageinfo)
+        canvas.drawString(inch, 0.75 * inch, " ")
         canvas.restoreState()
-        canvas.showPage()
-    
+            
     def myLaterPages(canvas, doc):
-        canvas.saveState()
-        canvas.setFont('Berylium', 9)
-        canvas.drawString(inch, 0.75 * inch,"Page %d %s" % (doc.page, pageinfo))
-        canvas.restoreState()
+        
+        #page_num = canvas.getPageNumber()
+        #key = 'ch%s' % doc.seq.nextf('style0')
+        #canvas.bookmarkPage(key)
+        #doc.notify('TOCEntry', (0, 'Chapter 1', page_num, key))
+        #canvas.saveState()
+        canvas.setAuthor(book.author)
+        canvas.setTitle(book.title)
+        canvas.setSubject("BooksBe")           
+        drawPageFrame(canvas)
     
     def go():
-
-        doc = SimpleDocTemplate(filename=Filename, title=book.title, author=book.author)   
-        Story = [Spacer(2,2*inch)]
-        style1 = ParagraphStyle('BeryliumBd',
-                                alignment=TA_CENTER,
-                                fontName='BeryliumBd',
-                                fontSize=14)
-        style2 = ParagraphStyle('Berylium',
-                                alignment=TA_JUSTIFY,
-                                fontName='Berylium',
-                                fontSize=11)
+        pdfmetrics.registerFont(TTFont('Berylium', 'resources/fonts/Berylium/Berylium.ttf'))
+        pdfmetrics.registerFont(TTFont('BeryliumBd', './resources/fonts/Berylium/Beryliumbold.ttf'))
+        pdfmetrics.registerFont(TTFont('BeryliumIt', './resources/fonts/Berylium/BeryliumItalic.ttf'))
+        pdfmetrics.registerFont(TTFont('BeryliumBI', './resources/fonts/Berylium/BeryliumboldItalic.ttf'))
+        registerFontFamily('Berylium', normal='Berylium', bold='BeryliumBd', italic='BeryliumIt', boldItalic='BeryliumBI')
 
         chapters = Chapter.objects.filter(book_id = id)
+        chapterNum = 0
 
-        for i in chapters:
-         
-            d = (" %s" % i.title_chapter )
-            f = Paragraph(d, style1)
+        Story = []  
+
+        style0 = ParagraphStyle('style0',
+                                alignment=TA_LEFT,
+                                fontName='BeryliumBd',
+                                fontSize=12) 
+        style1 = ParagraphStyle('style1',
+                                alignment=TA_CENTER,
+                                fontName='BeryliumBd',
+                                leading = 14,
+                                fontSize=14)
+        style2 = ParagraphStyle('style2',
+                                alignment=TA_JUSTIFY,
+                                fontName='Berylium',
+                                leading = 14,
+                                fontSize=11)
+        doc.addPageTemplates([PageTemplate(id='TitlePage', frames=Frame1, onPage=myFirstPage),PageTemplate(id='ContentPage', frames=Frame1, onPage=myLaterPages)])
+
+        Story.append(NextPageTemplate('TitlePage'))
+        Story.append(NextPageTemplate('ContentPage'))
+        Story.append(PageBreak())
+        Story.append(Spacer(2,1*inch))
+        Story.append(Paragraph("""Table of Contents:""", style1))
+        Story.append(Spacer(1,0.3*inch))
+        toc = TableOfContents() 
+        toc.levelStyles = [style0, style1, style2]        
+        Story.append(toc)
+        Story.append(PageBreak())
+
+        def doHeading(text,sty):
+            from hashlib import sha1
+            bn=sha1((text+sty.name).encode('utf8')).hexdigest()
+            h=Paragraph(text+'<a name="%s"/>' % bn, sty)
+            h._bookmarkName=bn
+            Story.append(h) 
+
+        for i in chapters:        
+            Story.append(NextPageTemplate('ContentPage'))    
+            doc.multiBuild(Story)
+            chapterNum += 1
             Story.append(Spacer(2,1*inch))
-            Story.append(f)
+            Story.append(Paragraph("Chapter " + str(chapterNum), style1))
+            Story.append(Spacer(2,0.2*inch))
+            d = (" %s" % i.title_chapter  )
+            doHeading(d, style1)
             Story.append(Spacer(2,1*inch))
             e = (" %s" % i.content )
+            str(e).replace('\n','<br />\n')
             g = Paragraph(e, style2)
             Story.append(g)
-            Story.append(Spacer(2,2*inch))
             Story.append(PageBreak())
-
-        doc.build(Story, onFirstPage=myFirstPage, onLaterPages=myLaterPages)    
-
+            doc.multiBuild(Story)
     go()
-    return FileResponse(open(Filename, 'br'), content_type='application/pdf')    
+    
+    return HttpResponse(open(book.title, 'br'), content_type='application/pdf')    
+
 
