@@ -23,7 +23,7 @@
     crossorigin="anonymous"></script>
   <!--Navbar-->
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="/index/">BooksBe</a>
+    <a class="navbar-brand" href="/">BooksBe</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
       aria-controls="navbarText" aria-expanded="False" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -33,6 +33,7 @@
       <ul class="navbar-nav mr-auto">
 
         {% if user.is_authenticated %}
+        <li class="nav-item"><a class="nav-link" href="/add_illustration/">Add illustration</a></li>
         <li class="nav-item"><a class="nav-link" href="/add_book/">Add book</a></li>
         <li class="nav-item"><a class="nav-link" href="/add_chapter/">Add chapter</a></li>
         <li class="nav-item"><a class="nav-link" href="/books/">Book list</a></li>
@@ -41,7 +42,9 @@
       </ul>
       <ul class="navbar-nav">
         {% if user.is_authenticated %}
-        <li class="nav-item"><a class="nav-link" href="#">Welcome, {{user.first_name}}</a></li>
+        
+        <li class="nav-item"><a class="nav-link" href="">Welcome, {{user.first_name}}</a></li>
+        <li class="nav-item"><a class="nav-link" href="/admin/">Admin panel</a></li>
         <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
         
         {% else %}

@@ -42,10 +42,11 @@ urlpatterns = [
     path('register/', views.register_request, name='register'),
     path("logout/", views.logout_request, name= "logout"),
     
-    path('index/', views.PublishedBookListView.as_view(), name='index'),
     path('', views.PublishedBookListView.as_view(), name='index'),
+    path('index/', views.PublishedBookListView.as_view(), name='index'),
     path('add_book/', views.add_books, name='add_books'),
     path('add_chapter/', views.add_chapter, name='add_chapter'),
+    path('add_illustration/', views.add_illustration, name='add_illustration'),
     path('edit_chapter/<int:chapter_id>', views.edit_chapter, name='edit_chapter'),
     path('edit_book/<int:book_id>', views.edit_book, name='edit_book'),
 

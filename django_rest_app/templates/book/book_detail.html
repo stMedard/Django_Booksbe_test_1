@@ -2,23 +2,30 @@
 
 {% block content %}
 <div class="container py-5">
-    <div class="card" style="width: 58rem;">
-        <div class="card-body">
+    <div class="card mb-3" style="max-width: 100%;">
+        <div class="row g-0">
 
-            <h5 class="card-title">{{ book.title }}</h5>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{ book.title }}</h5>
 
-            <h6 class="card-subtitle mb-2 text-muted">Genre: {{ book.genre }}</h6>
-            <h6 class="card-subtitle mb-2 text-muted">Author: {{ book.author }}</h6>
-            <h6 class="card-subtitle mb-2 text-muted">Published: {{ book.get_publish_display }}</h6>
-            <h6 class="card-subtitle mb-2 text-muted">Publish date: {{ book.date_of_publication|date }}</h6>
-            <a href="{% url 'generate-pdf' id=book.id  %}" class="btn btn-sm btn-success">Generate Pdf</a>
-            <p><a href="{% url 'edit_book'  book.id %}">Edit book</a></p>
-            
-            {% for chapter in chapter_list %}
-            <h5>{{ chapter.title_chapter }}</h5>
-            <p><a href="{% url 'edit_chapter'  chapter.id %}">Edit chapter</a></p>
-            
-            {% endfor %}
+                    <h6 class="card-subtitle mb-2 text-muted">Genre: {{ book.genre }}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Author: {{ book.author }}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Published: {{ book.get_publish_display }}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Publish date: {{ book.date_of_publication|date }}</h6>
+                    <a href="{% url 'generate-pdf' id=book.id  %}" class="btn btn-sm btn-success">Generate Pdf</a>
+                    <p><a href="{% url 'edit_book'  book.id %}">Edit book</a></p>
+
+                    {% for chapter in chapter_list %}
+                    <h5>{{ chapter.title_chapter }}</h5>
+                    <p><a href="{% url 'edit_chapter'  chapter.id %}">Edit chapter</a></p>
+
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <img src="../../../media/{{book.illustration.image}}" class="card-img-top" alt="">
+            </div>
         </div>
     </div>
 </div>

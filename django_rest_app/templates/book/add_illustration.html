@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<div class="container py-5">
+    <h1>Add illustration</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div>
+            <p>{{formset.as_p}}</p>
+            <button class="btn btn-primary" type="submit">Save</button>
+        </div>
+    </form>
+
+</div>
+<script>
+    document.getElementById("id_author_name").classList.add("form-control");
+    document.getElementById("id_author_name").placeholder = "Author name";
+    document.getElementById("id_author_name").type = "text";
+    document.getElementById("id_author_name").required = "required";
+    document.getElementById("id_image").className.add("form-control");
+    document.getElementById("id_image").required = "required";
+
+</script>
+{% endblock %}

@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{%load static%}
+
 
 {% block content %}
 <div class="container py-5">
@@ -7,9 +9,10 @@
         {% for book in book_list %}
         <div class="col">
             <div div class="card border-dark mb-3" style="max-width: 18rem;">
+                <img src="../media/{{book.illustration.image}}" class="card-img-top" alt="">
                 <div class="card-body">
                     <h5><a href="book/{{ book.id }}/">{{ book.title }}</a></h5>
-                    <p class="card-title">By {{ book.author }}</p>
+                    <p class="card-title">By: {{ book.author }}</p>
                     <p class="card-title">Genre: {{ book.genre }}</p>
                     <p class="card-title">Published: {{ book.get_publish_display}}</p>
                     <p class="card-title">Publication: {{ book.date_of_publication|date }}</p>

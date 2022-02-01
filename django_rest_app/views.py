@@ -4,7 +4,7 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from django_rest_app.serializers import UserSerializer, GroupSerializer#, BookSerializer
 
-from .models import Book, Chapter, Book
+from .models import Book, Chapter, Book, Illustration
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
@@ -12,10 +12,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 
-from .forms import NewUserForm, BookForm, ChapterForm
-#from django.contrib.auth.mixins import LoginRequiredMixin
-#from django.contrib.auth.decorators import login_required
-
+from .forms import NewUserForm, BookForm, ChapterForm, IllustrationForm
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -96,25 +93,29 @@ def add_books(request):
         return render(request, 'accounts/login.html')
     else:
         Form = BookForm 
+        formset = Form(user=request.user)
         
         if request.method == 'POST':
-            formset = Form(request.POST)
+            formset = Form(request.POST, user=request.user)
             
             if formset.is_valid():
-                            
+                    
                 new_book = Book.objects.create(
                     title = formset.cleaned_data["title"],
                     author = formset.cleaned_data["author"],
                     genre = formset.cleaned_data["genre"],
+                    illustration = formset.cleaned_data["illustration"],
                     publish = formset.cleaned_data["publish"],
                     date_of_publication = formset.cleaned_data["date_of_publication"],
-                    user = User.objects.get(username=request.user.username),
+                    user_b = User.objects.get(username=request.user.username),
                 )
                 new_book.save()
-               
+                #formset.save()
                 return redirect('book-list')
         else:
-            formset = Form()
+            
+            formset = Form(user=request.user)
+            
            
         return render( request, 'book/add_book.html', {'formset': formset})
     
@@ -124,10 +125,10 @@ def edit_book(request, book_id):
 
     else:
         book = Book.objects.get(id=book_id)
-        formset = BookForm(book) 
+        formset = BookForm(book, user=request.user) 
         
         if request.method == 'POST':
-            formset = BookForm(instance=book, data=request.POST)
+            formset = BookForm(instance=book, data=request.POST, user=request.user)
             
             if formset.is_valid():
                 
@@ -135,7 +136,7 @@ def edit_book(request, book_id):
                 return redirect('book-list')
         else:
              
-            formset = BookForm(instance=book)
+            formset = BookForm(instance=book, user=request.user)
             
         context = {'book': book, 'BookDetailView': BookDetailView, 'formset': formset}
             
@@ -170,7 +171,7 @@ class UserBookListView(ListView):
     template_name = 'book/book_lists.html'
     
     def get_queryset(self):
-        return Book.objects.filter(user=self.request.user) 
+        return Book.objects.filter(user_b=self.request.user) 
 
 class PublishedBookListView(ListView):
 
@@ -186,19 +187,50 @@ def add_chapter(request):
         return render(request, 'accounts/login.html')
     else:
         
-        formset = ChapterForm(user=request.user)
+        formset = ChapterForm(user_b=request.user)
 
         if request.method == 'POST':
-            formset = ChapterForm(request.POST, user=request.user)
-            print(formset)
+            formset = ChapterForm(request.POST, user_b=request.user)
+
             if formset.is_valid():    
-                      
-                formset.save()
+                new_chapter = Chapter.objects.create(
+                    title_chapter = formset.cleaned_data["title_chapter"],
+                    content = formset.cleaned_data["content"],
+                    book = formset.cleaned_data["book"],
+                    user_c = User.objects.get(username=request.user.username),
+                    
+                )
+                new_chapter.save() 
                 return redirect('book-list')
         else:
-            formset = ChapterForm(user=request.user)
+            formset = ChapterForm(user_b=request.user)
         
         return render( request, 'book/add_chapter.html', {'formset': formset})
+
+def add_illustration(request):
+    if not request.user.is_authenticated:
+        return render(request, 'accounts/login.html')
+    else:
+        
+        formset = IllustrationForm(user=request.user)
+
+        if request.method == 'POST':
+            formset = IllustrationForm(request.POST, request.FILES, user=request.user)
+
+            if formset.is_valid():    
+                new_illustration = Illustration.objects.create(
+                    author_name = formset.cleaned_data["author_name"],
+                    image = formset.cleaned_data["image"],
+                    user = User.objects.get(username=request.user.username),
+                    
+                )
+                new_illustration.save()  
+            
+                return redirect('book-list')
+        else:
+            formset = IllustrationForm(user=request.user)
+        
+        return render( request, 'book/add_illustration.html', {'formset': formset})
 
 def edit_chapter(request, chapter_id):
     if not request.user.is_authenticated:
@@ -206,10 +238,10 @@ def edit_chapter(request, chapter_id):
 
     else:
         chapter = Chapter.objects.get(id=chapter_id)
-        formset = ChapterForm(user=request.user) 
+        formset = ChapterForm(user_b=request.user) 
         
         if request.method == 'POST':
-            formset = ChapterForm(instance=chapter, data=request.POST, user=request.user)
+            formset = ChapterForm(instance=chapter, data=request.POST, user_b=request.user)
             
             if formset.is_valid():
                 
@@ -217,7 +249,7 @@ def edit_chapter(request, chapter_id):
                 return redirect('book-list')
         else:
              
-            formset = ChapterForm(instance=chapter, user=request.user)
+            formset = ChapterForm(instance=chapter, user_b=request.user)
             
         context = {'chapter': chapter, 'BookDetailView': BookDetailView, 'formset': formset}
             
@@ -243,7 +275,7 @@ class ChapterListView(ListView):
         context = super().get_context_data(**kwargs)
         return context
 
-from reportlab.platypus import Paragraph, Spacer, PageBreak, BaseDocTemplate,PageTemplate, Frame , NextPageTemplate
+from reportlab.platypus import Paragraph, Spacer, PageBreak, BaseDocTemplate,PageTemplate, Frame , NextPageTemplate, Image
 from reportlab.rl_config import defaultPageSize
 from django.http import HttpResponse
 from reportlab.lib.styles import ParagraphStyle
@@ -289,6 +321,8 @@ def generatePDF(request, id):
     pageinfo = "%s / %s " % (Author, Title)
     file_name = book.title
     doc = MyDocTemplate(file_name)
+    chapters = Chapter.objects.filter(book_id = id)
+    
 
     def drawPageFrame(canv):
         canv.line(left_margin, top_margin, right_margin, top_margin)
@@ -327,9 +361,6 @@ def generatePDF(request, id):
         pdfmetrics.registerFont(TTFont('BeryliumBI', './resources/fonts/Berylium/BeryliumboldItalic.ttf'))
         registerFontFamily('Berylium', normal='Berylium', bold='BeryliumBd', italic='BeryliumIt', boldItalic='BeryliumBI')
 
-        chapters = Chapter.objects.filter(book_id = id)
-        chapterNum = 0
-
         Story = []  
 
         style0 = ParagraphStyle('style0',
@@ -349,6 +380,9 @@ def generatePDF(request, id):
         doc.addPageTemplates([PageTemplate(id='TitlePage', frames=Frame1, onPage=myFirstPage),PageTemplate(id='ContentPage', frames=Frame1, onPage=myLaterPages)])
 
         Story.append(NextPageTemplate('TitlePage'))
+        filename = book.illustration.image
+        Story.append(Spacer(2,4*inch))
+        Story.append(Image(filename, width=15*cm,height=11*cm))
         Story.append(NextPageTemplate('ContentPage'))
         Story.append(PageBreak())
         Story.append(Spacer(2,1*inch))
@@ -365,7 +399,7 @@ def generatePDF(request, id):
             h=Paragraph(text+'<a name="%s"/>' % bn, sty)
             h._bookmarkName=bn
             Story.append(h) 
-
+        chapterNum = 0
         for i in chapters:        
             Story.append(NextPageTemplate('ContentPage'))    
             doc.multiBuild(Story)
@@ -382,7 +416,18 @@ def generatePDF(request, id):
             Story.append(g)
             Story.append(PageBreak())
             doc.multiBuild(Story)
-    go()
+
+
+
+    try:
+        chapters[0] is None
+    except:
+        return redirect("/add_chapter")
+
+    if book.illustration is None:
+        return redirect('/edit_book/'+ str(book.id))
+    else:
+       go() 
     
     return HttpResponse(open(book.title, 'br'), content_type='application/pdf')    
 

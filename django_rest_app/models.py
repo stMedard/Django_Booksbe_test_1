@@ -7,6 +7,7 @@ from ckeditor.fields import RichTextField
 
 # Define a new User admin
 class UserAdmin(models.Model):
+    
     email = models.EmailField(max_length = 70, blank = True)
     first_name = models.CharField(max_length = 70, blank = True)
     last_name = models.CharField(max_length = 70, blank = True)
@@ -35,11 +36,21 @@ class Genre(models.Model):
     def __str__(self):
         return self.genre
 
+class Illustration(models.Model):
+
+    author_name = models.CharField(max_length = 200, blank = True, default= '')
+    image = models.ImageField(upload_to ='uploads/', null=True, blank=True)#height_field=400, width_field=600,
+    user = models.ForeignKey(User, on_delete = models.CASCADE, null = True, default= '')
+    
+    def get_absolute_url(self):
+        return reverse('add_illustration', args=[str(self.id)])
+
 class Book(models.Model):
     date_of_publication = models.DateField(default = datetime.now, blank = True)
     title = models.CharField(max_length = 200, blank = True, default= '')
     author = models.CharField(max_length = 200, blank = True, default= '')
-    user = models.ForeignKey(User, on_delete = models.CASCADE, null = True, default= '')
+    illustration = models.ForeignKey(Illustration, on_delete = models.CASCADE, null = True, blank = True)
+    user_b = models.ForeignKey(User, on_delete = models.CASCADE, blank=True, default = '')
     genre = models.ForeignKey(Genre, on_delete = models.CASCADE, null = True)
     CHOICES = ((True, 'Yes'), (False, 'No'))
     publish = models.BooleanField(default = False, choices = CHOICES, help_text = 'Just how the book is going to be published now')
@@ -54,7 +65,7 @@ class Chapter(models.Model):
     title_chapter = models.CharField(max_length=200, blank=True)
     content = RichTextField()
     #content = CKEditor5Field('Content', config_name='extends', blank=True)
-    
+    user_c = models.ForeignKey(User, on_delete = models.CASCADE, blank=True, default = '')
     book = models.ForeignKey(Book, on_delete=models.CASCADE, blank=True, default = '')
 
     class Meta:

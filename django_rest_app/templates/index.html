@@ -2,13 +2,16 @@
 
 {% block content %}
 <div class="container py-5">
+
 <h1>Books</h1>
+
 <div class="row row-cols-1 row-cols-md-4 g-4">
     {% for book in book_list %}
     <div class="col">
         <div div class="card border-dark mb-3" style="max-width: 18rem;">
+            <img src="../media/{{book.illustration.image}}" class="card-img-top" alt="">
             <div class="card-body">
-                <h5><a href="book/{{ book.id }}/">{{ book.title }}</a></h5>
+                <h5><a href="../index/book/{{ book.id }}/">{{ book.title }}</a></h5>
                 <p class="card-title">By: {{ book.author }}</p>
                 <p class="card-title">Genre: {{ book.genre }}</p>
                 <p class="card-title">Published: {{ book.get_publish_display}}</p>

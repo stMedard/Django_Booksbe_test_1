@@ -6,7 +6,7 @@
     <form method="post" action="{% url 'edit_book' book.id  %}">
         {% csrf_token %}
 
-        <p>{{ formset.media }}{{ formset.as_p | safe}}</p>
+        <p>{{ formset.media }}{{ formset.as_p }}</p>
 
         <button class="btn btn-primary" type="submit">Save</button>
     </form>
@@ -14,12 +14,18 @@
 
 <script>
     document.getElementById("id_title").classList.add("form-control");
-    document.getElementById("id_book").classList.add("form-control");
     document.getElementById("id_title").placeholder = "Title";
     document.getElementById("id_title").type = "text";
-    document.getElementById("id_book").type = "text";
+    document.getElementById("id_author").classList.add("form-control");
+    document.getElementById("id_author").placeholder = "Author";
+    document.getElementById("id_author").type = "text";
+    document.getElementById("id_illustration").classList.add("form-control");
+    document.getElementById("id_illustration").placeholder = "Illustration";
+    document.getElementById("id_illustration").type = "text";
+    document.getElementById("id_genre").classList.add("form-control");
+    document.getElementById("id_date_of_publication").dataset.add("form-control");
     document.getElementById("id_title").required = "required";
-    document.getElementById("id_book").required = "required";
+    document.getElementById("id_genre").required = "required";
 </script>
 
 {% endblock %}
